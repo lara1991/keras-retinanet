@@ -150,11 +150,12 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
     if args.tensorboard_dir:
         makedirs(args.tensorboard_dir)
         update_freq = args.tensorboard_freq
+        hist_freq = args.tensorboard_hist_freq
         if update_freq not in ['epoch', 'batch']:
             update_freq = int(update_freq)
         tensorboard_callback = keras.callbacks.TensorBoard(
             log_dir                = args.tensorboard_dir,
-            histogram_freq         = 0,
+            histogram_freq         = hist_freq,
             batch_size             = args.batch_size,
             write_graph            = True,
             write_grads            = False,
@@ -437,6 +438,7 @@ def parse_args(args):
     parser.add_argument('--snapshot-path',    help='Path to store snapshots of models during training (defaults to \'./snapshots\')', default='./snapshots')
     parser.add_argument('--tensorboard-dir',  help='Log directory for Tensorboard output', default='')  # default='./logs') => https://github.com/tensorflow/tensorflow/pull/34870
     parser.add_argument('--tensorboard-freq', help='Update frequency for Tensorboard output. Values \'epoch\', \'batch\' or int', default='epoch')
+    parser.add_argument('--tensorboard-hist-freq', help='Save model layer histograms for Tensorboard output. Values \'epoch\', \'batch\' or int', default=0)
     parser.add_argument('--no-snapshots',     help='Disable saving snapshots.', dest='snapshots', action='store_false')
     parser.add_argument('--no-evaluation',    help='Disable per epoch evaluation.', dest='evaluation', action='store_false')
     parser.add_argument('--freeze-backbone',  help='Freeze training of backbone layers.', action='store_true')
