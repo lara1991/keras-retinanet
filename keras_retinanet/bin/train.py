@@ -155,11 +155,11 @@ def create_callbacks(model, training_model, prediction_model, validation_generat
             update_freq = int(update_freq)
         tensorboard_callback = keras.callbacks.TensorBoard(
             log_dir                = args.tensorboard_dir,
-            histogram_freq         = hist_freq,
+            histogram_freq         = 1,
             batch_size             = args.batch_size,
             write_graph            = True,
             write_grads            = False,
-            write_images           = False,
+            write_images           = True,
             update_freq            = update_freq,
             embeddings_freq        = 0,
             embeddings_layer_names = None,
