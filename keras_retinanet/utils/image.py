@@ -19,8 +19,27 @@ import numpy as np
 import cv2
 from PIL import Image
 
+# update 
+import os
+
 from .transform import change_transform_origin
 
+## add function to deal with masks
+def read_mask(path):
+    path_split = path.split("/")
+    mask_dir_name = path_split[-2]
+    mask_dir = mask_dir_name + "_mask"
+    mask_base_dir = "/".join(path_split[:-2])
+    mask_name = path_split[-1]
+    mask_path = os.path.join(mask_base_dir,mask_dir,f'{mask_name}')
+
+    mask = cv2.imread(mask_path,0) ## load grayscale image - mask
+    _,mask = cv2.threshold(mask,0.1,255.,cv2.THRESH_BINARY)
+    return mask
+
+def image_with_mask(image,mask):
+    return cv2.bitwise_and(image,image,mask=mask)
+###
 
 def read_image_bgr(path):
     """ Read an image in BGR format.
@@ -30,7 +49,12 @@ def read_image_bgr(path):
     """
     # We deliberately don't use cv2.imread here, since it gives no feedback on errors while reading the image.
     image = np.ascontiguousarray(Image.open(path).convert('RGB'))
-    return image[:, :, ::-1]
+    image = image[:, :, ::-1]
+    
+    # load mask
+    mask = read_mask(path)
+    image = image_with_mask(image,mask)
+    return image
 
 
 def preprocess_image(x, mode='caffe'):
